@@ -15,14 +15,14 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
 import java.util.List;
 
-@Route("extra")
+@Route("cities")
 @UIScope
 @Component
-public class CitiesViewExtra extends VerticalLayout {
+public class CitiesListView extends VerticalLayout {
       private final RestTemplate restTemplate;
 
     @Autowired
-    public CitiesViewExtra(RestTemplate restTemplate) {
+    public CitiesListView(RestTemplate restTemplate) {
             this.restTemplate = restTemplate;
 
         ComboBox<StatesAirVisualResponse.State> stateComboBox = new ComboBox<>("Select State");
@@ -33,7 +33,6 @@ public class CitiesViewExtra extends VerticalLayout {
             if (selectedState != null && !selectedState.isEmpty()) {
                 String apiUrl = "http://localhost:8080/v1/Poland/cities";
 
-                // ResponseEntity<String> response = restTemplate.getForEntity(apiUrl + "?state=" + selectedState, String.class);
                 CitiesAirVisualResponse citiesAirVisualResponse = restTemplate.getForObject(apiUrl + "?state=" + selectedState, CitiesAirVisualResponse.class);
                 assert citiesAirVisualResponse != null;
                 List<CitiesAirVisualResponse.City> cities = Arrays.asList(citiesAirVisualResponse.getData());
