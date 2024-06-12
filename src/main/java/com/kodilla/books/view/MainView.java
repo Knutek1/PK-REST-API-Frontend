@@ -1,4 +1,4 @@
-package com.kodilla.books;
+package com.kodilla.books.view;
 
 import com.kodilla.books.domain.Book;
 import com.kodilla.books.service.BookService;
@@ -52,3 +52,4 @@ public class MainView extends VerticalLayout {
         grid.setItems(bookService.findByTitle(filter.getValue()));
     }
 }
+

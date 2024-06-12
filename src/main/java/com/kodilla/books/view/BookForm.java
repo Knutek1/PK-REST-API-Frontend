@@ -1,4 +1,4 @@
-package com.kodilla.books;
+package com.kodilla.books.view;
 
 import com.kodilla.books.domain.Book;
 import com.kodilla.books.service.BookService;
@@ -35,14 +35,14 @@ public class BookForm extends FormLayout {
     private void save() {
         Book book = binder.getBean();
         service.save(book);
-        mainView.refresh();
+      //  mainView.refresh();
         setBook(null);
     }
 
     private void delete() {
         Book book = binder.getBean();
         service.delete(book);
-        mainView.refresh();
+       // mainView.refresh();
         setBook(null);
     }
     public void setBook(Book book) {

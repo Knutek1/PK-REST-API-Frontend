@@ -1,6 +1,6 @@
 package com.kodilla.books.service;
 
-import com.kodilla.books.BookType;
+import com.kodilla.books.view.BookType;
 import com.kodilla.books.domain.Book;
 
 import java.util.HashSet;
