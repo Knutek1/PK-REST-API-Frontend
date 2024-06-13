@@ -19,35 +19,37 @@ import java.util.List;
 @UIScope
 @Component
 public class CitiesListView extends VerticalLayout {
-      private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final Grid<CitiesAirVisualResponse.City> grid;
 
     @Autowired
     public CitiesListView(RestTemplate restTemplate) {
-            this.restTemplate = restTemplate;
+        this.restTemplate = restTemplate;
 
         ComboBox<StatesAirVisualResponse.State> stateComboBox = new ComboBox<>("Select State");
         stateComboBox.setItems(getStates());
 
-        Button button = new Button("Send Request", event -> {
-            String selectedState = String.valueOf(stateComboBox.getValue());
-            if (selectedState != null && !selectedState.isEmpty()) {
+        grid = new Grid<>(CitiesAirVisualResponse.City.class);
+        grid.setColumns("city");
+        grid.setVisible(false);
+
+        Button button = new Button("State Request", event -> {
+            StatesAirVisualResponse.State selectedState = stateComboBox.getValue();
+            if (selectedState != null) {
                 String apiUrl = "http://localhost:8080/v1/Poland/cities";
 
-                CitiesAirVisualResponse citiesAirVisualResponse = restTemplate.getForObject(apiUrl + "?state=" + selectedState, CitiesAirVisualResponse.class);
+                CitiesAirVisualResponse citiesAirVisualResponse = restTemplate.getForObject(apiUrl + "?state=" + selectedState.getState(), CitiesAirVisualResponse.class);
                 assert citiesAirVisualResponse != null;
                 List<CitiesAirVisualResponse.City> cities = Arrays.asList(citiesAirVisualResponse.getData());
 
-                Grid<CitiesAirVisualResponse.City> grid = new Grid<>(CitiesAirVisualResponse.City.class);
                 grid.setItems(cities);
-                grid.setColumns("city");
-
-                add(grid);
-
+                grid.setVisible(true);
             }
         });
 
-        add(stateComboBox, button);
+        add(stateComboBox, button, grid);
     }
+
     public List<StatesAirVisualResponse.State> getStates() {
         String endpointUrl = "http://localhost:8080/v1/Poland/states";
         StatesAirVisualResponse statesAirVisualResponse = restTemplate.getForObject(endpointUrl, StatesAirVisualResponse.class);
