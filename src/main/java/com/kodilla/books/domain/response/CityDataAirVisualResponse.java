@@ -1,4 +1,4 @@
-package com.kodilla.books.domain;
+package com.kodilla.books.domain.response;
 
 import lombok.Getter;
 

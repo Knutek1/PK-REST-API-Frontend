@@ -1,6 +1,6 @@
 package com.kodilla.books.service;
 
-import com.kodilla.books.domain.CityDataAirVisualResponse;
+import com.kodilla.books.domain.response.CityDataAirVisualResponse;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;

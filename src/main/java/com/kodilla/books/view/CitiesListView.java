@@ -1,7 +1,7 @@
 package com.kodilla.books.view;
 
-import com.kodilla.books.domain.CitiesAirVisualResponse;
-import com.kodilla.books.domain.StatesAirVisualResponse;
+import com.kodilla.books.domain.response.CitiesAirVisualResponse;
+import com.kodilla.books.domain.response.StatesAirVisualResponse;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;

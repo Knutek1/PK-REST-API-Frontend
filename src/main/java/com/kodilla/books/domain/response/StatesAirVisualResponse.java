@@ -1,7 +1,6 @@
-package com.kodilla.books.domain;
+package com.kodilla.books.domain.response;
 
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
 public class StatesAirVisualResponse {

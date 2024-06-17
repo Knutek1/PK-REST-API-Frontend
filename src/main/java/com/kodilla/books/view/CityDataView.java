@@ -1,9 +1,8 @@
 package com.kodilla.books.view;
 
-import com.kodilla.books.domain.CitiesAirVisualResponse;
-import com.kodilla.books.domain.CityDataAirVisualResponse;
-import com.kodilla.books.domain.StatesAirVisualResponse;
+import com.kodilla.books.domain.response.*;
 import com.kodilla.books.service.CityDataDisplayer;
+import com.kodilla.books.service.AirTableService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -21,50 +20,88 @@ import java.util.List;
 @UIScope
 @Component
 public class CityDataView extends HorizontalLayout {
-
     private final RestTemplate restTemplate;
     private final VerticalLayout cityDataContainer;
+    private CityDataAirVisualResponse cityDataAirVisualResponse;
+    private final AirTableService airTableService;
+
+    private ComboBox<StatesAirVisualResponse.State> stateComboBox;
+    private ComboBox<CitiesAirVisualResponse.City> cityComboBox;
+    private ComboBox<BasesAirTableResponse.Base> baseCombobox;
+    private ComboBox<TablesAirTableResponse.Table> tableCombobox;
+    private Button cityButton;
+    private Button airTableButton;
+    private Button baseButton;
+    private Button tableButton;
 
     @Autowired
     public CityDataView(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        cityDataContainer = new VerticalLayout();
+        this.cityDataContainer = new VerticalLayout();
+        this.airTableService = new AirTableService(restTemplate);
 
-        ComboBox<StatesAirVisualResponse.State> stateComboBox = new ComboBox<>("Select State");
+        createComponents();
+        addComponentsToLayout();
+        initializeComponentVisibility();
+    }
+
+    private void createComponents() {
+        stateComboBox = new ComboBox<>("Select State");
         stateComboBox.setItems(getStates());
-        Button stateButton;
-        ComboBox<CitiesAirVisualResponse.City> cityComboBox = new ComboBox<>("Select City");
-        Button cityButton = new Button("City Request");
 
+        cityComboBox = new ComboBox<>("Select City");
+        cityButton = new Button("Confirm City");
+        airTableButton = new Button("Post to AirTable");
+        baseCombobox = new ComboBox<>("Select base");
+        baseButton = new Button("Confirm base");
+        tableCombobox = new ComboBox<>("Select table");
+        tableButton = new Button("Confirm table");
+
+        cityButton.addClickListener(event -> cityButtonClick());
+        airTableButton.addClickListener(event -> airTableService.airTableButtonClick(baseCombobox, baseButton, airTableButton));
+        baseButton.addClickListener(event -> airTableService.baseButtonClick(baseCombobox, tableCombobox, tableButton));
+        tableButton.addClickListener(event -> airTableService.tableButtonClick(baseCombobox, tableCombobox, cityDataAirVisualResponse, baseButton, tableButton));
+    }
+
+    private void addComponentsToLayout() {
+        VerticalLayout inputLayout = new VerticalLayout(stateComboBox, new Button("Confirm State", event -> stateButtonClick()), cityComboBox, cityButton);
+        VerticalLayout airtableLayout = new VerticalLayout(baseCombobox, baseButton, tableCombobox, tableButton, airTableButton);
+        HorizontalLayout mainLayout = new HorizontalLayout(inputLayout, cityDataContainer, airtableLayout);
+        add(mainLayout);
+    }
+
+    private void initializeComponentVisibility() {
         cityComboBox.setVisible(false);
         cityButton.setVisible(false);
+        airTableButton.setVisible(false);
+        baseCombobox.setVisible(false);
+        tableCombobox.setVisible(false);
+        baseButton.setVisible(false);
+        tableButton.setVisible(false);
+    }
 
-        stateButton = new Button("State Request", event -> {
-            StatesAirVisualResponse.State selectedState = stateComboBox.getValue();
-            if (selectedState != null) {
-                CitiesAirVisualResponse citiesAirVisualResponse = restTemplate.getForObject("http://localhost:8080/v1/Poland/cities?state=" + selectedState, CitiesAirVisualResponse.class);
-                if (citiesAirVisualResponse != null) {
-                    cityComboBox.setItems(Arrays.asList(citiesAirVisualResponse.getData()));
-                    cityComboBox.setVisible(true);
-                    cityButton.setVisible(true);
-                }
+    private void stateButtonClick() {
+        StatesAirVisualResponse.State selectedState = stateComboBox.getValue();
+        if (selectedState != null) {
+            CitiesAirVisualResponse citiesAirVisualResponse = restTemplate.getForObject("http://localhost:8080/v1/Poland/cities?state=" + selectedState, CitiesAirVisualResponse.class);
+            if (citiesAirVisualResponse != null) {
+                cityComboBox.setItems(Arrays.asList(citiesAirVisualResponse.getData()));
+                cityComboBox.setVisible(true);
+                cityButton.setVisible(true);
             }
-        });
+        }
+    }
 
-        cityButton.addClickListener(event -> {
-            StatesAirVisualResponse.State selectedState = stateComboBox.getValue();
-            CitiesAirVisualResponse.City selectedCity = cityComboBox.getValue();
-            if (selectedCity != null) {
-                CityDataAirVisualResponse cityDataAirVisualResponse = restTemplate.getForObject("http://localhost:8080/v1/Poland/city_data?state=" + selectedState + "&city=" + selectedCity, CityDataAirVisualResponse.class);
-                if (cityDataAirVisualResponse != null) {
-                    CityDataDisplayer.displayCityData(cityDataContainer, cityDataAirVisualResponse);
-                }
+    private void cityButtonClick() {
+        StatesAirVisualResponse.State selectedState = stateComboBox.getValue();
+        CitiesAirVisualResponse.City selectedCity = cityComboBox.getValue();
+        if (selectedCity != null) {
+            cityDataAirVisualResponse = restTemplate.getForObject("http://localhost:8080/v1/Poland/city_data?state=" + selectedState + "&city=" + selectedCity, CityDataAirVisualResponse.class);
+            if (cityDataAirVisualResponse != null) {
+                CityDataDisplayer.displayCityData(cityDataContainer, cityDataAirVisualResponse);
+                airTableButton.setVisible(true);
             }
-        });
-
-        VerticalLayout inputLayout = new VerticalLayout(stateComboBox, stateButton, cityComboBox, cityButton);
-        HorizontalLayout mainLayout = new HorizontalLayout(inputLayout, cityDataContainer);
-        add(mainLayout);
+        }
     }
 
     private List<StatesAirVisualResponse.State> getStates() {
