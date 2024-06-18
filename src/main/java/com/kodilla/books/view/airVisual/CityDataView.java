@@ -1,6 +1,10 @@
-package com.kodilla.books.view;
+package com.kodilla.books.view.airVisual;
 
-import com.kodilla.books.domain.response.*;
+import com.kodilla.books.domain.response.airTable.BasesAirTableResponse;
+import com.kodilla.books.domain.response.airTable.TablesAirTableResponse;
+import com.kodilla.books.domain.response.airVisual.CitiesAirVisualResponse;
+import com.kodilla.books.domain.response.airVisual.CityDataAirVisualResponse;
+import com.kodilla.books.domain.response.airVisual.StatesAirVisualResponse;
 import com.kodilla.books.service.CityDataDisplayer;
 import com.kodilla.books.service.AirTableService;
 import com.vaadin.flow.component.button.Button;
@@ -24,15 +28,14 @@ public class CityDataView extends HorizontalLayout {
     private final VerticalLayout cityDataContainer;
     private CityDataAirVisualResponse cityDataAirVisualResponse;
     private final AirTableService airTableService;
-
-    private ComboBox<StatesAirVisualResponse.State> stateComboBox;
-    private ComboBox<CitiesAirVisualResponse.City> cityComboBox;
-    private ComboBox<BasesAirTableResponse.Base> baseCombobox;
-    private ComboBox<TablesAirTableResponse.Table> tableCombobox;
-    private Button cityButton;
-    private Button airTableButton;
-    private Button baseButton;
-    private Button tableButton;
+    private final ComboBox<StatesAirVisualResponse.State> stateComboBox = new ComboBox<>("Select State");
+    private final ComboBox<CitiesAirVisualResponse.City> cityComboBox = new ComboBox<>("Select City");
+    private final ComboBox<BasesAirTableResponse.Base> baseCombobox = new ComboBox<>("Select base");
+    private final ComboBox<TablesAirTableResponse.Table> tableCombobox = new ComboBox<>("Select table");
+    private final Button cityButton = new Button("Confirm City");
+    private final Button airTableButton = new Button("Post to AirTable");
+    private final Button baseButton = new Button("Confirm base");
+    private final Button tableButton = new Button("Confirm table");
 
     @Autowired
     public CityDataView(RestTemplate restTemplate) {
@@ -40,37 +43,27 @@ public class CityDataView extends HorizontalLayout {
         this.cityDataContainer = new VerticalLayout();
         this.airTableService = new AirTableService(restTemplate);
 
-        createComponents();
-        addComponentsToLayout();
-        initializeComponentVisibility();
+        initialComponentsSettings();
+        buttonActions();
+        layout();
     }
 
-    private void createComponents() {
-        stateComboBox = new ComboBox<>("Select State");
+    private void buttonActions() {
         stateComboBox.setItems(getStates());
-
-        cityComboBox = new ComboBox<>("Select City");
-        cityButton = new Button("Confirm City");
-        airTableButton = new Button("Post to AirTable");
-        baseCombobox = new ComboBox<>("Select base");
-        baseButton = new Button("Confirm base");
-        tableCombobox = new ComboBox<>("Select table");
-        tableButton = new Button("Confirm table");
-
         cityButton.addClickListener(event -> cityButtonClick());
         airTableButton.addClickListener(event -> airTableService.airTableButtonClick(baseCombobox, baseButton, airTableButton));
         baseButton.addClickListener(event -> airTableService.baseButtonClick(baseCombobox, tableCombobox, tableButton));
         tableButton.addClickListener(event -> airTableService.tableButtonClick(baseCombobox, tableCombobox, cityDataAirVisualResponse, baseButton, tableButton));
     }
 
-    private void addComponentsToLayout() {
+    private void layout() {
         VerticalLayout inputLayout = new VerticalLayout(stateComboBox, new Button("Confirm State", event -> stateButtonClick()), cityComboBox, cityButton);
         VerticalLayout airtableLayout = new VerticalLayout(baseCombobox, baseButton, tableCombobox, tableButton, airTableButton);
         HorizontalLayout mainLayout = new HorizontalLayout(inputLayout, cityDataContainer, airtableLayout);
         add(mainLayout);
     }
 
-    private void initializeComponentVisibility() {
+    private void initialComponentsSettings() {
         cityComboBox.setVisible(false);
         cityButton.setVisible(false);
         airTableButton.setVisible(false);

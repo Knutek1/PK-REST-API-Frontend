@@ -1,7 +1,10 @@
 package com.kodilla.books.service;
 
 import com.kodilla.books.domain.request.AddRecordsAirTableRequest;
-import com.kodilla.books.domain.response.*;
+import com.kodilla.books.domain.response.airTable.BasesAirTableResponse;
+import com.kodilla.books.domain.response.airTable.RecordsAirTableResponse;
+import com.kodilla.books.domain.response.airTable.TablesAirTableResponse;
+import com.kodilla.books.domain.response.airVisual.CityDataAirVisualResponse;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.notification.Notification;
@@ -44,21 +47,37 @@ public class AirTableService {
         BasesAirTableResponse.Base selectedBase = baseCombobox.getValue();
         TablesAirTableResponse.Table selectedTable = tableCombobox.getValue();
         if (selectedTable != null) {
-            AddRecordsAirTableRequest.Fields fields = new AddRecordsAirTableRequest.Fields(
-                    cityDataAirVisualResponse.getData().getCurrent().getPollution().getAqius(),
-                    cityDataAirVisualResponse.getData().getCity(),
-                    cityDataAirVisualResponse.getData().getCurrent().getWeather().getTp());
-
-            AddRecordsAirTableRequest.Record record = new AddRecordsAirTableRequest.Record(fields);
-            AddRecordsAirTableRequest request = new AddRecordsAirTableRequest(List.of(record));
-
-            restTemplate.postForObject("http://localhost:8080/v1/records/" + selectedBase.getId() + "/" + selectedTable.getId(), request, RecordsAirTableResponse.class);
+            createAndSendRecord(cityDataAirVisualResponse, selectedBase, selectedTable);
             Notification.show("Wysłano dane temperatury i AQIUS do Airtable");
             baseButton.setVisible(false);
             tableButton.setVisible(false);
             baseCombobox.setVisible(false);
             tableCombobox.setVisible(false);
         }
+    }
+
+    public void scheduledRecordSending(CityDataAirVisualResponse cityDataAirVisualResponse) {
+        BasesAirTableResponse basesAirTableResponse = restTemplate.getForObject("http://localhost:8080/v1/bases", BasesAirTableResponse.class);
+        if (basesAirTableResponse != null) {
+            BasesAirTableResponse.Base selectedBase = basesAirTableResponse.getBases()[0];
+            TablesAirTableResponse tablesAirTableResponse = restTemplate.getForObject("http://localhost:8080/v1/tables/" + selectedBase.getId(), TablesAirTableResponse.class);
+            if (tablesAirTableResponse != null) {
+                TablesAirTableResponse.Table selectedTable = tablesAirTableResponse.getTables()[0];
+                createAndSendRecord(cityDataAirVisualResponse, selectedBase, selectedTable);
+            }
+        }
+    }
+
+    private void createAndSendRecord(CityDataAirVisualResponse cityDataAirVisualResponse, BasesAirTableResponse.Base selectedBase, TablesAirTableResponse.Table selectedTable) {
+        AddRecordsAirTableRequest.Fields fields = new AddRecordsAirTableRequest.Fields(
+                cityDataAirVisualResponse.getData().getCurrent().getPollution().getAqius(),
+                cityDataAirVisualResponse.getData().getCity(),
+                cityDataAirVisualResponse.getData().getCurrent().getWeather().getTp());
+
+        AddRecordsAirTableRequest.Record record = new AddRecordsAirTableRequest.Record(fields);
+        AddRecordsAirTableRequest request = new AddRecordsAirTableRequest(List.of(record));
+
+        restTemplate.postForObject("http://localhost:8080/v1/records/" + selectedBase.getId() + "/" + selectedTable.getId(), request, RecordsAirTableResponse.class);
     }
 }
 

@@ -1,6 +1,6 @@
-package com.kodilla.books.view;
+package com.kodilla.books.view.airVisual;
 
-import com.kodilla.books.domain.response.StatesAirVisualResponse;
+import com.kodilla.books.domain.response.airVisual.StatesAirVisualResponse;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;

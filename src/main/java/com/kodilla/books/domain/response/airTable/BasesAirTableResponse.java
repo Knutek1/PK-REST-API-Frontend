@@ -1,8 +1,6 @@
-package com.kodilla.books.domain.response;
+package com.kodilla.books.domain.response.airTable;
 
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 public class BasesAirTableResponse{

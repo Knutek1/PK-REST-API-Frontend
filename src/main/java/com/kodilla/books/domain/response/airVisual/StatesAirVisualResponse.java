@@ -1,4 +1,4 @@
-package com.kodilla.books.domain.response;
+package com.kodilla.books.domain.response.airVisual;
 
 import lombok.Getter;
 

@@ -1,7 +1,7 @@
-package com.kodilla.books.view;
+package com.kodilla.books.view.airVisual;
 
-import com.kodilla.books.domain.response.CitiesAirVisualResponse;
-import com.kodilla.books.domain.response.StatesAirVisualResponse;
+import com.kodilla.books.domain.response.airVisual.CitiesAirVisualResponse;
+import com.kodilla.books.domain.response.airVisual.StatesAirVisualResponse;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
@@ -46,7 +46,6 @@ public class CitiesListView extends VerticalLayout {
                 grid.setVisible(true);
             }
         });
-
         add(stateComboBox, button, grid);
     }
 
