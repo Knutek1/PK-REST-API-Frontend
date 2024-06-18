@@ -5,6 +5,7 @@ Ogólnie dużo rzeczy nie zrobiłem:
 - w Back-end mam tylko 10 endpointów (6 do AirTable i 4 do AirVisual) i nie zrobiłem zapytania PUT,
 - nie zrobiłem logów do Bazy danych
 - nie zrobiłem testów i wzorców projektowych.
+  
 Chciałem robić jeszcze drugą tabelę w AirTable, gdzie na podstawie rekordów z tabeli "Pomiary" byłyby jakieś rekordy tworzone z obliczeniami/statystyką.
 Nie umiem wyrzucić odpowiedzi w Json "options": {} mimo zapisków NOT_EMPTY.
 Scheduler jest we Frontendzie - zapewne powinno się to odbywać przez Backend, ze względu na zbyt małą ilość czasu do końca projektu nie zostawiłem to we frontendzie bo praktycznie wszystkie dane były przygotowane tak jak do manualnego wysyłania danych przez GUI. 
@@ -15,9 +16,13 @@ Chyba się za dużo na Front-endzie jednak skupiłem i nie wiem czy czasami za d
 
 widoki we frontendzie:
 http://localhost:8081/states
+
 http://localhost:8081/cities
+
 http://localhost:8081/nearest_city
+
 http://localhost:8081/city_data
+
 http://localhost:8081/records
 
 W razie czego dane do AirTable
